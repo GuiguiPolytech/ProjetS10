@@ -33,6 +33,16 @@ public class FraisDeplacementController {
         return fraisDeplacementRepository.save(fraisDeplacement);
     }
 
+    // @PostMapping
+    // public FraisDeplacement create(@RequestBody FraisDeplacement fraisDeplacement) {
+    //     Personne personne = personneRepository.findById(fraisDeplacement.getPersonne().getId())
+    //             .orElseThrow(() -> new RuntimeException("Personne not found"));
+    //     fraisDeplacement.setPersonne(personne);
+    //     Etat etatEnCours = etatRepository.findByLibelle("En cours");
+    //     fraisDeplacement.getEtats().add(etatEnCours);
+    //     return fraisDeplacementRepository.save(fraisDeplacement);
+    // }
+
     @GetMapping
     public List<FraisDeplacement> getAll() {
         return fraisDeplacementRepository.findAll();
