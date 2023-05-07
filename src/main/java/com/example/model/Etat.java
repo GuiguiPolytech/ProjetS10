@@ -17,4 +17,8 @@ public class Etat {
 
     @ManyToMany(mappedBy = "etats")
     private Set<FraisDeplacement> fraisDeplacements = new HashSet<>();
+
+    public Etat(String libelle) {
+        this.libelle = libelle;
+    }
 }

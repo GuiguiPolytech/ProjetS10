@@ -28,4 +28,14 @@ public class PersonneController {
     public Manager createManager(@RequestBody Manager manager) {
         return personneRepository.save(manager);
     }
+
+    @PutMapping("/{id}")
+    public Personne updatePersonne(@PathVariable Long id, @RequestBody Personne personne) {
+        Personne existingPersonne = personneRepository.findById(id).orElse(null);
+        existingPersonne.setEmail(personne.getEmail());
+        existingPersonne.setNom(personne.getNom());
+        existingPersonne.setPrenom(personne.getPrenom());
+        return personneRepository.save(existingPersonne);
+    }
+
 }
