@@ -25,23 +25,26 @@ public class FraisDeplacementController {
     @Autowired
     private EtatRepository etatRepository;
 
-    @PostMapping
-    public FraisDeplacement create(@RequestBody FraisDeplacement fraisDeplacement) {
-        Personne personne = personneRepository.findById(fraisDeplacement.getPersonne().getId())
-                .orElseThrow(() -> new RuntimeException("Personne not found"));
-        fraisDeplacement.setPersonne(personne);
-        return fraisDeplacementRepository.save(fraisDeplacement);
-    }
-
     // @PostMapping
     // public FraisDeplacement create(@RequestBody FraisDeplacement fraisDeplacement) {
     //     Personne personne = personneRepository.findById(fraisDeplacement.getPersonne().getId())
     //             .orElseThrow(() -> new RuntimeException("Personne not found"));
     //     fraisDeplacement.setPersonne(personne);
-    //     Etat etatEnCours = etatRepository.findByLibelle("En cours");
-    //     fraisDeplacement.getEtats().add(etatEnCours);
     //     return fraisDeplacementRepository.save(fraisDeplacement);
     // }
+
+    @PostMapping
+    public FraisDeplacement create(@RequestBody FraisDeplacement fraisDeplacement, @RequestParam Long etatId) {
+        Personne personne = personneRepository.findById(fraisDeplacement.getPersonne().getId())
+                .orElseThrow(() -> new RuntimeException("Personne not found"));
+        fraisDeplacement.setPersonne(personne);
+        Etat etat = etatRepository.findById(etatId)
+                .orElseThrow(() -> new RuntimeException("Etat not found"));
+        etat.getFraisDeplacements().size(); // Charge explicitement la collection de fraisDeplacements de l'objet Etat
+        fraisDeplacement.getEtats().add(etat);
+        return fraisDeplacementRepository.save(fraisDeplacement);
+    }
+
 
     @GetMapping
     public List<FraisDeplacement> getAll() {

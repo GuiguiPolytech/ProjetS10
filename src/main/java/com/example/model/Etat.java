@@ -15,7 +15,7 @@ public class Etat {
     private Long id;
     private String libelle;
 
-    @ManyToMany(mappedBy = "etats")
+    @ManyToMany(mappedBy = "etats", fetch = FetchType.EAGER)
     private Set<FraisDeplacement> fraisDeplacements = new HashSet<>();
 
     public Etat(String libelle) {
