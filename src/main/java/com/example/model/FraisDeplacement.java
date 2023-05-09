@@ -21,6 +21,6 @@ public class FraisDeplacement {
     @ManyToOne
     private Personne personne;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Etat> etats = new HashSet<>();
 }
