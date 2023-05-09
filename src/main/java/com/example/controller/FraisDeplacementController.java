@@ -10,65 +10,77 @@ import com.example.repository.EtatRepository;
 import com.example.repository.FraisDeplacementRepository;
 import com.example.repository.PersonneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/frais-deplacement")
 public class FraisDeplacementController {
+    
     @Autowired
     private FraisDeplacementRepository fraisDeplacementRepository;
-
+    
     @Autowired
     private PersonneRepository personneRepository;
-
+    
     @Autowired
     private EtatRepository etatRepository;
-
-    // @PostMapping
-    // public FraisDeplacement create(@RequestBody FraisDeplacement fraisDeplacement) {
-    //     Personne personne = personneRepository.findById(fraisDeplacement.getPersonne().getId())
-    //             .orElseThrow(() -> new RuntimeException("Personne not found"));
-    //     fraisDeplacement.setPersonne(personne);
-    //     return fraisDeplacementRepository.save(fraisDeplacement);
-    // }
-
-    @PostMapping
-    public FraisDeplacement create(@RequestBody FraisDeplacement fraisDeplacement, @RequestParam Long etatId) {
-        Personne personne = personneRepository.findById(fraisDeplacement.getPersonne().getId())
-                .orElseThrow(() -> new RuntimeException("Personne not found"));
-        fraisDeplacement.setPersonne(personne);
+    
+    @PostMapping("")
+    public FraisDeplacement createFraisDeplacement(@RequestBody FraisDeplacement fraisDeplacement) {
+        return fraisDeplacementRepository.save(fraisDeplacement);
+    }
+    
+    @GetMapping("")
+    public List<FraisDeplacement> getAllFraisDeplacements() {
+        return fraisDeplacementRepository.findAll();
+    }
+    
+    @GetMapping("/{id}")
+    public FraisDeplacement getFraisDeplacementById(@PathVariable Long id) throws NotFoundException {
+        return fraisDeplacementRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
+    }
+    
+    @PutMapping("/{id}")
+    public FraisDeplacement updateFraisDeplacement(@PathVariable Long id, @RequestBody FraisDeplacement updatedFraisDeplacement) throws NotFoundException {
+        FraisDeplacement fraisDeplacement = fraisDeplacementRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
+        
+        fraisDeplacement.setMotif(updatedFraisDeplacement.getMotif());
+        fraisDeplacement.setMoyenTransport(updatedFraisDeplacement.getMoyenTransport());
+        fraisDeplacement.setDateDepart(updatedFraisDeplacement.getDateDepart());
+        fraisDeplacement.setPersonne(updatedFraisDeplacement.getPersonne());
+        fraisDeplacement.setEtats(updatedFraisDeplacement.getEtats());
+        
+        return fraisDeplacementRepository.save(fraisDeplacement);
+    }
+    
+    @DeleteMapping("/{id}")
+    public void deleteFraisDeplacement(@PathVariable Long id) {
+        fraisDeplacementRepository.deleteById(id);
+    }
+    
+    @PostMapping("/{id}/etat")
+    public FraisDeplacement addEtatToFraisDeplacement(@PathVariable Long id, @RequestParam Long etatId) throws NotFoundException {
+        FraisDeplacement fraisDeplacement = fraisDeplacementRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
         Etat etat = etatRepository.findById(etatId)
-                .orElseThrow(() -> new RuntimeException("Etat not found"));
-        etat.getFraisDeplacements().size(); // Charge explicitement la collection de fraisDeplacements de l'objet Etat
+                .orElseThrow(() -> new NotFoundException());
+        
         fraisDeplacement.getEtats().add(etat);
         return fraisDeplacementRepository.save(fraisDeplacement);
     }
-
-
-    @GetMapping
-    public List<FraisDeplacement> getAll() {
-        return fraisDeplacementRepository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public FraisDeplacement getById(@PathVariable Long id) {
-        return fraisDeplacementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Frais de déplacement not found"));
-    }
-
-    @PutMapping("/{id}/etat")
-    public FraisDeplacement updateEtats(@PathVariable Long id, @RequestBody List<Long> etatIds) {
+    
+    @DeleteMapping("/{id}/etat")
+    public FraisDeplacement removeEtatFromFraisDeplacement(@PathVariable Long id, @RequestParam Long etatId) throws NotFoundException {
         FraisDeplacement fraisDeplacement = fraisDeplacementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Frais de déplacement not found"));
-        Set<Etat> etats = new HashSet<>();
-        for (Long etatId : etatIds) {
-            Etat etat = etatRepository.findById(etatId)
-                    .orElseThrow(() -> new RuntimeException("Etat not found"));
-            etats.add(etat);
-        }
-        fraisDeplacement.setEtats(etats);
+                .orElseThrow(() -> new NotFoundException());
+        Etat etat = etatRepository.findById(etatId)
+                .orElseThrow(() -> new NotFoundException());
+        
+        fraisDeplacement.getEtats().remove(etat);
         return fraisDeplacementRepository.save(fraisDeplacement);
     }
 }
-
