@@ -67,35 +67,31 @@ public class FraisDeplacementController {
         return fraisDeplacement;
     }
 
-    
-
     @PutMapping("/{id}")
-    public FraisDeplacement updateFraisDeplacement(@PathVariable Long id, @RequestBody FraisDeplacement fraisDeplacement) throws NotFoundException {
+    public FraisDeplacement updateFraisDeplacementById(@PathVariable Long id, @RequestBody FraisDeplacement fraisDeplacement) throws NotFoundException {
+        // Recherche du frais de déplacement à mettre à jour
         FraisDeplacement fraisDeplacementToUpdate = fraisDeplacementRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException());
 
-        // mettre à jour les champs du frais de déplacement à partir de la requête
-        fraisDeplacementToUpdate.setMotif(fraisDeplacement.getMotif());
-        fraisDeplacementToUpdate.setMoyenTransport(fraisDeplacement.getMoyenTransport());
+        // Mise à jour des champs
         fraisDeplacementToUpdate.setDateDepart(fraisDeplacement.getDateDepart());
-        fraisDeplacementToUpdate.setPersonne(fraisDeplacement.getPersonne());
+        fraisDeplacementToUpdate.setMoyenTransport(fraisDeplacement.getMoyenTransport());
+        fraisDeplacementToUpdate.setMotif(fraisDeplacement.getMotif());
 
-        // mettre à jour la liste des états du frais de déplacement
-        Set<Etat> etatsToUpdate = new HashSet<>();
-        for (Etat etat : fraisDeplacement.getEtats()) {
-            Etat existingEtat = etatRepository.findByLibelle(etat.getLibelle());
-            if (existingEtat == null) {
-                existingEtat = etatRepository.save(etat);
-            }
-            etatsToUpdate.add(existingEtat);
-        }
-        fraisDeplacementToUpdate.setEtats(etatsToUpdate);
+        // Enregistrement du frais de déplacement mis à jour
+        fraisDeplacementRepository.save(fraisDeplacementToUpdate);
 
-        // enregistrer les modifications dans la base de données
-        return fraisDeplacementRepository.save(fraisDeplacementToUpdate);
+        // Récupération du frais de déplacement mis à jour avec la liste d'états associés
+        FraisDeplacement fraisDeplacementUpdated = fraisDeplacementRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
+
+        Set<Etat> etats = etatRepository.findByFraisDeplacements(fraisDeplacementUpdated);
+        fraisDeplacementUpdated.setEtats(etats);
+
+        return fraisDeplacementUpdated;
     }
 
-    
+
     @DeleteMapping("/{id}")
     public void deleteFraisDeplacement(@PathVariable Long id) {
         fraisDeplacementRepository.deleteById(id);
