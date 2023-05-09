@@ -17,4 +17,10 @@ public class Personne {
     private String email;
     private String nom;
     private String prenom;
+
+    public String getTypeProfil() {
+        DiscriminatorValue discriminatorValue = getClass().getAnnotation(DiscriminatorValue.class);
+        return discriminatorValue == null ? null : discriminatorValue.value();
+    }
+    
 }
