@@ -29,13 +29,32 @@ public class FraisDeplacementController {
     
     @PostMapping("")
     public FraisDeplacement createFraisDeplacement(@RequestBody FraisDeplacement fraisDeplacement) {
+        // Création d'un nouvel état
+        Etat nouvelEtat = new Etat("En attente");
+        etatRepository.save(nouvelEtat);
+
+        // Ajout de l'état créé à la liste d'états du frais de déplacement
+        Set<Etat> etats = fraisDeplacement.getEtats();
+        etats.add(nouvelEtat);
+        fraisDeplacement.setEtats(etats);
+
+        // Enregistrement du frais de déplacement mis à jour
         return fraisDeplacementRepository.save(fraisDeplacement);
     }
+
     
     @GetMapping("")
     public List<FraisDeplacement> getAllFraisDeplacements() {
-        return fraisDeplacementRepository.findAll();
-    }
+        List<FraisDeplacement> fraisDeplacements = fraisDeplacementRepository.findAll();
+
+        for (FraisDeplacement fraisDeplacement : fraisDeplacements) {
+            Set<Etat> etats = etatRepository.findByFraisDeplacements(fraisDeplacement);
+            fraisDeplacement.setEtats(etats);
+        }
+
+    return fraisDeplacements;
+}
+
     
     @GetMapping("/{id}")
     public FraisDeplacement getFraisDeplacementById(@PathVariable Long id) throws NotFoundException {
