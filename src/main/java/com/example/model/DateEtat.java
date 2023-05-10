@@ -1,6 +1,8 @@
 package com.example.model;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +15,16 @@ public class DateEtat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate dateEtat;
+    private LocalDateTime dateEtat;
+
+    private LocalTime heureEtat;
 
     @ManyToOne
     private Etat etat;
 
-    public DateEtat(LocalDate dateEtat, Etat etat) {
+    public DateEtat(LocalDateTime dateEtat,LocalTime heureEtat , Etat etat) {
         this.dateEtat = dateEtat;
+        this.heureEtat = heureEtat;
         this.etat = etat;
     }
 }

@@ -1,8 +1,8 @@
 package com.example.controller;
 
-import java.sql.Date;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import com.example.model.DateEtat;
@@ -41,7 +41,7 @@ public class FraisDeplacementController {
         fraisDeplacement.setEtats(etats);
 
         // Enregistrement de la date de l'état créé dans la table date_etat
-        DateEtat dateEtat = new DateEtat(LocalDate.now(), nouvelEtat);
+        DateEtat dateEtat = new DateEtat(LocalDateTime.now(),LocalTime.now(), nouvelEtat);
         dateEtatRepository.save(dateEtat);
 
         // Enregistrement du frais de déplacement mis à jour
@@ -95,8 +95,8 @@ public class FraisDeplacementController {
 
                 DateEtat dateEtat = new DateEtat();
                 dateEtat.setEtat(etatToUpdate);
-                //Date avec heure
-                dateEtat.setDateEtat(LocalDate.now());
+                dateEtat.setDateEtat(LocalDateTime.now());
+                dateEtat.setHeureEtat(LocalTime.now());
                 dateEtatRepository.save(dateEtat);
                 break;
             }
