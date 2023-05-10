@@ -1,14 +1,15 @@
 package com.example.controller;
 
-import java.util.HashSet;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import com.example.model.DateEtat;
 import com.example.model.Etat;
 import com.example.model.FraisDeplacement;
-import com.example.model.Personne;
+import com.example.repository.DateEtatRepository;
 import com.example.repository.EtatRepository;
 import com.example.repository.FraisDeplacementRepository;
-import com.example.repository.PersonneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,12 @@ public class FraisDeplacementController {
     
     @Autowired
     private FraisDeplacementRepository fraisDeplacementRepository;
-    
-    @Autowired
-    private PersonneRepository personneRepository;
-    
+
     @Autowired
     private EtatRepository etatRepository;
+
+    @Autowired
+    private DateEtatRepository dateEtatRepository;
     
     @PostMapping("")
     public FraisDeplacement createFraisDeplacement(@RequestBody FraisDeplacement fraisDeplacement) {
@@ -37,6 +38,10 @@ public class FraisDeplacementController {
         Set<Etat> etats = fraisDeplacement.getEtats();
         etats.add(nouvelEtat);
         fraisDeplacement.setEtats(etats);
+
+        // Enregistrement de la date de l'état créé dans la table date_etat
+        DateEtat dateEtat = new DateEtat(LocalDate.now(), nouvelEtat);
+        dateEtatRepository.save(dateEtat);
 
         // Enregistrement du frais de déplacement mis à jour
         return fraisDeplacementRepository.save(fraisDeplacement);
@@ -103,7 +108,6 @@ public class FraisDeplacementController {
         return fraisDeplacementUpdated;
     }
     
-
 
     @DeleteMapping("/{id}")
     public void deleteFraisDeplacement(@PathVariable Long id) {

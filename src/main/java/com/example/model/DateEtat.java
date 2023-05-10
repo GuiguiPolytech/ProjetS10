@@ -12,8 +12,14 @@ public class DateEtat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDate dateEtat;
 
     @ManyToOne
     private Etat etat;
+
+    public DateEtat(LocalDate dateEtat, Etat etat) {
+        this.dateEtat = dateEtat;
+        this.etat = etat;
+    }
 }
