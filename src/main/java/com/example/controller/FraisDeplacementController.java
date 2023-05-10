@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -91,6 +92,12 @@ public class FraisDeplacementController {
                         .orElseThrow(() -> new NotFoundException());
                 etatToUpdate.setLibelle(etat.getLibelle());
                 etatRepository.save(etatToUpdate);
+
+                DateEtat dateEtat = new DateEtat();
+                dateEtat.setEtat(etatToUpdate);
+                //Date avec heure
+                dateEtat.setDateEtat(LocalDate.now());
+                dateEtatRepository.save(dateEtat);
                 break;
             }
         }
