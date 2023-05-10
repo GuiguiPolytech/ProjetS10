@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/frais-deplacement")
+@CrossOrigin(origins = "*")
 public class FraisDeplacementController {
     
     @Autowired
@@ -96,7 +97,7 @@ public class FraisDeplacementController {
                 DateEtat dateEtat = new DateEtat();
                 dateEtat.setEtat(etatToUpdate);
                 dateEtat.setDateEtat(LocalDateTime.now());
-                dateEtat.setHeureEtat(LocalTime.now());
+                dateEtat.setHeureEtat(LocalTime.now()); 
                 dateEtatRepository.save(dateEtat);
                 break;
             }
