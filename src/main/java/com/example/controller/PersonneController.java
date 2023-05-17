@@ -6,6 +6,7 @@ import com.example.model.Manager;
 import com.example.model.Personne;
 import com.example.repository.PersonneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,6 +38,12 @@ public class PersonneController {
         existingPersonne.setNom(personne.getNom());
         existingPersonne.setPrenom(personne.getPrenom());
         return personneRepository.save(existingPersonne);
+    }
+
+    @GetMapping("/{id}")
+    public Personne getPersonneById(@PathVariable Long id) throws NotFoundException {
+        return personneRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException());
     }
 
 }
